@@ -6,6 +6,10 @@
 #define COLS 10
 
 
+void gotoxy(int x, int y){
+	printf("%c[%d;%df", 0x1B, y, x);
+}
+
 /***************************************************
 * The folowing function was taken from this stack overflow post
 * http://stackoverflow.com/questions/421860/capture-characters-from-standard-input-without-waiting-for-enter-to-be-pressed
@@ -38,13 +42,10 @@ char getch() {
 void printMap(char map[][COLS], int x, int y){
 	int i, j;
 	
-	system("clear");
 	for(i = 0; i < ROWS; i++){
 		for(j = 0; j < COLS; j++){
-			if(i == y && j == x)
-				printf("x");
-			else
-				printf("%c",map[i][j]);
+			gotoxy(j, i);
+			printf("%c",map[i][j]);
 		}
 		puts("");
 	}
@@ -55,15 +56,28 @@ int main(){
 	char map[ROWS][COLS];
 	char input;
 	
+	system("clear");
+	printf("\e[?25l");  //Hides cursor
+
 	for(i = 0; i < ROWS; i++){
 		for(j = 0; j < COLS; j++){
-			map[i][j] = '.';
+			map[i][j] = ' ';
 		}
 	}
 
 	while(cont){
 		printMap(map, x, y);
+		
+		gotoxy(x, y);	
+		printf("x");
+		fflush(stdout);
+
 		input = getch();
+		
+		gotoxy(x, y);
+		printf(" ");
+		fflush(stdout);
+		
 		if(input == 'w')
 			y--;
 		else if(input == 's')
@@ -72,7 +86,10 @@ int main(){
 			x--;
 		else if(input == 'd')
 			x++;
-		else if(input == 'q')
+		else if(input == 'q'){
+			system("clear");
 			cont = 0;
+			printf("\e[?25h");  //unhides cursor
+		}
 	}
 }
