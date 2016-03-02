@@ -91,5 +91,10 @@ int main(){
 			cont = 0;
 			printf("\e[?25h");  //unhides cursor
 		}
+		
+		if(x < 0)
+			x *= -1
+		if(y < 0)
+			y *= -1;
 	}
 }
